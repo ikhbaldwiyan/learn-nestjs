@@ -1,10 +1,18 @@
 import { Controller, Get, Post, Param, Query, Inject } from '@nestjs/common';
 import { UserService } from './user.service';
+import { Connection } from '../connection/connection';
 
 @Controller('api/users')
 export class UserController {
-  @Inject()
-  private userService: UserService
+  constructor(
+    private userService: UserService,
+    private connection: Connection,
+  ) {}
+  
+  @Get('/connection')
+  getConnection(): string {
+    return this.connection.getName();
+  }
 
   @Post()
   createUser(): string {
@@ -13,14 +21,14 @@ export class UserController {
 
   @Get('/list')
   findAllUsers(): Record<string, string> {
-    return { 
-      data: "Hello World"
+    return {
+      data: 'Hello World',
     };
   }
 
-  @Get("/hello")
+  @Get('/hello')
   hello(@Query('name') name: string): Record<string, string> {
-    return this.userService.sayHello(name)
+    return this.userService.sayHello(name);
   }
 
   @Get('/:id')
