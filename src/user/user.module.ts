@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserController } from './user/user.controller';
 import { UserService } from './user/user.service';
 import { Connection, createConnection } from './connection/connection';
@@ -6,6 +7,7 @@ import { mailService, MailService } from './mail/mail.service';
 import { createUserRepository, UserRepository } from './user-repository/user-repository';
 import { MemberService } from './member/member.service';
 import { ConfigService } from '@nestjs/config';
+import { User } from './entites/user.entity';
 
 @Module({
   controllers: [UserController],
@@ -31,6 +33,7 @@ import { ConfigService } from '@nestjs/config';
     },
     MemberService,
   ],
+  imports: [TypeOrmModule.forFeature([User])],
   exports: [UserService]
 })
 export class UserModule {}
