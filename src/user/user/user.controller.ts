@@ -16,7 +16,6 @@ import { MemberService } from '../member/member.service';
 import { CreateUserDto } from '../dto/user-dto';
 import { UpdateUserDto } from '../dto/update-user-dto';
 import { ApiKeyGuard } from '../../guard/api-key-guard';
-import { LoginDto } from '../dto/login-dto';
 
 @Controller('api/users')
 export class UserController {
@@ -121,10 +120,5 @@ export class UserController {
         message: error.message,
       };
     }
-  }
-
-  @Post('login')
-  loginUser(@Body() loginDto: LoginDto) {
-    return this.userService.login(loginDto);
   }
 }
