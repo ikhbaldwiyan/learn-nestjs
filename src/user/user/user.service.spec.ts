@@ -1,5 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UserService } from './user.service';
+import { CreateUserDto } from '../dto/user-dto';
 
 describe('UserService', () => {
   let service: UserService;
@@ -13,7 +14,7 @@ describe('UserService', () => {
   });
 
   it('should be say hello', () => {
-    const response = service.sayHello("Inzoid")
+    const response = service.createUser(CreateUserDto)
     expect(response).toBe("Say Hello")
   });
 });

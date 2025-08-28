@@ -7,6 +7,7 @@ import {
   Body,
   Delete,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { Connection } from '../connection/connection';
@@ -14,7 +15,9 @@ import { MailService } from '../mail/mail.service';
 import { MemberService } from '../member/member.service';
 import { CreateUserDto } from '../dto/user-dto';
 import { UpdateUserDto } from '../dto/update-user-dto';
+import { ApiKeyGuard } from '../../guard/api-key-guard';
 
+@UseGuards(ApiKeyGuard)
 @Controller('api/users')
 export class UserController {
   constructor(
