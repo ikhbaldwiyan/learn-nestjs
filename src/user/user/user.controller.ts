@@ -16,8 +16,8 @@ import { MemberService } from '../member/member.service';
 import { CreateUserDto } from '../dto/user-dto';
 import { UpdateUserDto } from '../dto/update-user-dto';
 import { ApiKeyGuard } from '../../guard/api-key-guard';
+import { LoginDto } from '../dto/login-dto';
 
-@UseGuards(ApiKeyGuard)
 @Controller('api/users')
 export class UserController {
   constructor(
@@ -39,7 +39,7 @@ export class UserController {
     return this.connection.getName();
   }
 
-  @Post()
+  @Post('register')
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
       const data = await this.userService.createUser(createUserDto);
@@ -86,7 +86,8 @@ export class UserController {
     }
   }
 
-  @Patch(":id")
+  @UseGuards(ApiKeyGuard)
+  @Patch(':id')
   async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -105,6 +106,7 @@ export class UserController {
     }
   }
 
+  @UseGuards(ApiKeyGuard)
   @Delete(':id')
   removeUserById(@Param('id') id: string) {
     try {
@@ -119,5 +121,10 @@ export class UserController {
         message: error.message,
       };
     }
+  }
+
+  @Post('login')
+  loginUser(@Body() loginDto: LoginDto) {
+    return this.userService.login(loginDto);
   }
 }

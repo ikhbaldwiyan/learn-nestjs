@@ -1,9 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entites/user.entity';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '../dto/user-dto';
 import { UpdateUserDto } from '../dto/update-user-dto';
+import { hash, compare } from 'bcrypt';
+import { LoginDto } from '../dto/login-dto';
 
 @Injectable()
 export class UserService {
@@ -13,7 +15,11 @@ export class UserService {
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
-    const userData = this.userRepository.create(createUserDto);
+    const hashedPassword = await hash(createUserDto.password, 10);
+    const userData = this.userRepository.create({
+      ...createUserDto,
+      password: hashedPassword,
+    });
     return this.userRepository.save(userData);
   }
 
@@ -31,6 +37,10 @@ export class UserService {
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    // Hash password if it's being updated
+    if (updateUserDto.password) {
+      updateUserDto.password = await hash(updateUserDto.password, 10);
+    }
     await this.userRepository.update({ id }, updateUserDto);
     return this.getUserDetail(id);
   }
@@ -41,5 +51,26 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
     return this.userRepository.remove(existingUser);
+  }
+
+  async login(loginDto: LoginDto): Promise<any> {
+    const user = await this.userRepository.findOneBy({ email: loginDto.email });
+    
+    if (!user) {
+      throw new UnauthorizedException("Email or password is incorrect");
+    }
+
+    const isPasswordValid = await compare(loginDto.password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException("Email or password is incorrect");
+    }
+
+    const { password, ...userWithoutPassword } = user;
+
+    return {
+      message: "Login successful",
+      data: userWithoutPassword
+    };
   }
 }

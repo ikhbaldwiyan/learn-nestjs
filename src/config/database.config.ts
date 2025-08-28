@@ -8,5 +8,6 @@ export const dataSourceOptions: DataSourceOptions = {
   password: 'root',
   database: 'learn',
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
+  migrations: ['src/migrations/*.ts'],
   synchronize: true, // enable only in development
 };
