@@ -23,7 +23,12 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    const users = await this.userRepository.find()
+    return users?.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email
+    }))
   }
 
   async getUserDetail(id: string): Promise<User> {
@@ -32,7 +37,11 @@ export class UserService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return user;
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email
+    };
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {

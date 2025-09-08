@@ -16,6 +16,7 @@ import { MemberService } from '../member/member.service';
 import { CreateUserDto } from '../dto/user-dto';
 import { UpdateUserDto } from '../dto/update-user-dto';
 import { ApiKeyGuard } from '../../guard/api-key-guard';
+import { AuthGuard } from '../../guard/auth-guard';
 
 @Controller('api/users')
 export class UserController {
@@ -69,6 +70,7 @@ export class UserController {
     }
   }
 
+  // @UseGuards(AuthGuard)
   @Get()
   async findAllUsers() {
     try {
