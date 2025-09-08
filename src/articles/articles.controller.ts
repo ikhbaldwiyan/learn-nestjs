@@ -24,11 +24,18 @@ export class ArticlesController {
 
   @Get()
   findAll(
-    @Query("author") author: string,
-    @Query("status") status: ArticleStatus,
+    @Query('page') page = 1,
+    @Query('limit') limit = 10,
+    @Query('author') author: string,
+    @Query('status') status: ArticleStatus,
     @Query('keyword') keyword?: string,
   ) {
-    return this.articleService.findAll(author, status, keyword);
+    return this.articleService.findAll(
+      { page, limit, route: '/articles' },
+      author,
+      status,
+      keyword,
+    );
   }
 
   @Get(':id')

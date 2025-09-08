@@ -6,6 +6,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { User } from '../user/entites/user.entity';
 import { ArticleStatus } from './dto/article-status.enum';
+import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class ArticlesService {
@@ -32,28 +33,28 @@ export class ArticlesService {
   }
 
   async findAll(
+    options: IPaginationOptions,
     authorId?: string,
     status?: ArticleStatus,
     keyword?: string,
-  ): Promise<Article[]> {
-    const where: any = {};
+  ): Promise<Pagination<Article>> {
+    const queryBuilder = this.articleRepo
+      .createQueryBuilder('article')
+      .leftJoinAndSelect('article.author', 'author');
 
     if (authorId) {
-      where.author = { id: authorId };
+      queryBuilder.andWhere('author.id = :authorId', { authorId });
     }
 
     if (status) {
-      where.status = status;
+      queryBuilder.andWhere('article.status = :status', { status });
     }
 
     if (keyword) {
-      where.title = ILike(`%${keyword}%`);
+      queryBuilder.andWhere('article.title ILIKE :keyword', { keyword: `%${keyword}%` });
     }
 
-    return await this.articleRepo.find({
-      where,
-      relations: ['author'],
-    });
+    return paginate<Article>(queryBuilder, options);
   }
 
   async findOne(id: string): Promise<Article> {
