@@ -6,10 +6,12 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { ArticlesService } from './articles.service';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
+import { ArticleStatus } from './dto/article-status.enum';
 
 @Controller('articles')
 export class ArticlesController {
@@ -21,8 +23,12 @@ export class ArticlesController {
   }
 
   @Get()
-  findAll() {
-    return this.articleService.findAll();
+  findAll(
+    @Query("author") author: string,
+    @Query("status") status: ArticleStatus,
+    @Query('keyword') keyword?: string,
+  ) {
+    return this.articleService.findAll(author, status, keyword);
   }
 
   @Get(':id')
