@@ -8,6 +8,7 @@ import { dataSourceOptions } from './config/database.config';
 import { AuthModule } from './auth/auth.module';
 import { ArticlesModule } from './articles/articles.module';
 import { CategoryModule } from './category/category.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { CategoryModule } from './category/category.module';
     AuthModule,
     ArticlesModule,
     CategoryModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -3,12 +3,14 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { ArticleStatus } from '../dto/article-status.enum';
 import { User } from '../../user/entites/user.entity';
 import { Category } from '../../category/entities/category.entity';
+import { Comment } from '../../comment/entities/comment.entity';
 
 @Entity('articles')
 export class Article {
@@ -47,4 +49,7 @@ export class Article {
 
   @Column({ type: 'int' })
   categoryId: number;
+
+  @OneToMany(() => Comment, (comment) => comment.article)
+  comments: Comment[]
 }

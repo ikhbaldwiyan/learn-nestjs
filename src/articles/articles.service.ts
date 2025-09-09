@@ -78,10 +78,41 @@ export class ArticlesService {
     return paginate<Article>(queryBuilder, options);
   }
 
-  async findOne(id: string): Promise<Article> {
-    const article = await this.articleRepo.findOne({ where: { id } });
+  async findOne(id: string): Promise<any> {
+    const article = await this.articleRepo.findOne({
+      where: { id },
+      relations: ['user', 'category', 'comments', 'comments.user'],
+    });
+
     if (!article) throw new NotFoundException(`Article ${id} not found`);
-    return article;
+
+    return {
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      createAt: article.createAt,
+      updatedAt: article.updatedAt,
+      author: {
+        id: article.user.id,
+        name: article.user.name,
+        email: article.user.email,
+      },
+      category: {
+        id: article.category.id,
+        name: article.category.name,
+        status: article.category.status,
+      },
+      comments: article.comments.map((comment) => ({
+        id: comment.id,
+        content: comment.content,
+        createdAt: comment.createdAt,
+        user: {
+          id: comment.user.id,
+          name: comment.user.name,
+          email: comment.user.email,
+        },
+      })),
+    };
   }
 
   async update(id: string, updateDto: UpdateArticleDto): Promise<Article> {
