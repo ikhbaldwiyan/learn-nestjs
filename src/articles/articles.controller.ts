@@ -26,13 +26,13 @@ export class ArticlesController {
   findAll(
     @Query('page') page = 1,
     @Query('limit') limit = 10,
-    @Query('author') author: string,
+    @Query('userId') userId: string,
     @Query('status') status: ArticleStatus,
     @Query('keyword') keyword?: string,
   ) {
     return this.articleService.findAll(
       { page, limit, route: '/articles' },
-      author,
+      userId,
       status,
       keyword,
     );

@@ -1,5 +1,5 @@
 import { ArticleStatus } from './article-status.enum';
-import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional, isString, IsString, IsUUID } from 'class-validator';
 
 export class CreateArticleDto {
   @IsString()
@@ -14,7 +14,11 @@ export class CreateArticleDto {
   @IsOptional()
   status?: ArticleStatus = ArticleStatus.DRAFT;
 
-  @IsUUID()
-  @IsNotEmpty({ message: 'authorId is required' })
-  authorId: string;
+  @IsString()
+  @IsNotEmpty({ message: 'userId is required' })
+  userId: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'categoryId is required' })
+  categoryId: string;
 }

@@ -12,9 +12,9 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column({ type: "varchar", select: false })
+  @Column({ type: "varchar"})
   password?: string;
 
-  @OneToMany(() => Article, (article) => article.author)
+  @OneToMany(() => Article, (article) => article.id)
   articles?: Article[];
 }

@@ -1,12 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ILike, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Article } from './entities/article.entity';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { User } from '../user/entites/user.entity';
 import { ArticleStatus } from './dto/article-status.enum';
-import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class ArticlesService {
@@ -18,32 +22,47 @@ export class ArticlesService {
   ) {}
 
   async create(dto: CreateArticleDto): Promise<Article> {
-    const author = await this.userRepo.findOneBy({ id: dto.authorId });
+    try {
+      const user = await this.userRepo.findOneBy({ id: dto.userId });
 
-    if (!author) {
-      throw new NotFoundException('Author not found');
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const article = this.articleRepo.create(dto);
+
+      return this.articleRepo.save(article);
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
-
-    const article = this.articleRepo.create({
-      ...dto,
-      author,
-    });
-
-    return this.articleRepo.save(article);
   }
 
   async findAll(
     options: IPaginationOptions,
-    authorId?: string,
+    userId?: string,
     status?: ArticleStatus,
     keyword?: string,
   ): Promise<Pagination<Article>> {
     const queryBuilder = this.articleRepo
       .createQueryBuilder('article')
-      .leftJoinAndSelect('article.author', 'author');
+      .leftJoin('article.user', 'user')
+      .leftJoin('article.category', 'category')
+      .select([
+        'article.id',
+        'article.title',
+        'article.status',
+        'article.createAt',
+        'article.updatedAt',
+        'user.id',
+        'user.name',
+        'user.email',
+        'category.id',
+        'category.name',
+      ]);
 
-    if (authorId) {
-      queryBuilder.andWhere('author.id = :authorId', { authorId });
+    if (userId) {
+      queryBuilder.andWhere('article.user = :userId', { userId });
     }
 
     if (status) {
@@ -51,7 +70,9 @@ export class ArticlesService {
     }
 
     if (keyword) {
-      queryBuilder.andWhere('article.title ILIKE :keyword', { keyword: `%${keyword}%` });
+      queryBuilder.andWhere('article.title ILIKE :keyword', {
+        keyword: `%${keyword}%`,
+      });
     }
 
     return paginate<Article>(queryBuilder, options);
@@ -65,32 +86,21 @@ export class ArticlesService {
 
   async update(id: string, updateDto: UpdateArticleDto): Promise<Article> {
     const article = await this.findOne(id);
+
     if (!article) {
       throw new NotFoundException(`Article with id ${id} not found`);
     }
-
-    // If authorId is passed, fetch the user
-    if (updateDto.authorId) {
-      const author = await this.userRepo.findOneBy({ id: updateDto.authorId });
-      if (!author) {
-        throw new NotFoundException(
-          `User with id ${updateDto.authorId} not found`,
-        );
-      }
-      article.author = author;
-    }
-
-    // Assign the rest of the fields (except authorId, we already handled it)
-    const { authorId, ...rest } = updateDto;
-    Object.assign(article, rest);
+    Object.assign(article, updateDto);
 
     return await this.articleRepo.save(article);
   }
 
-  async remove(id: string): Promise<void> {
+  async remove(id: string): Promise<any> {
     const result = await this.articleRepo.delete(id);
     if (result.affected === 0) {
       throw new NotFoundException(`Article ${id} not found`);
     }
+
+    return 'Article successfully delete';
   }
 }
