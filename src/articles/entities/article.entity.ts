@@ -18,7 +18,7 @@ export class Article {
   @Column()
   title: string;
 
-  @Column({ type: "text"})
+  @Column({ type: 'text' })
   content: string;
 
   @Column({
@@ -38,15 +38,13 @@ export class Article {
   @ManyToOne(() => User, (user) => user.id)
   user: User;
   @Column({
-    type: "uuid"
+    type: 'uuid',
   })
-  userId: string
+  userId: string;
 
-  @ManyToOne(() => Category, (category) => category.id)
-  category: Category
+  @ManyToOne(() => Category, (category) => category.articles)
+  category: Category;
 
-  @Column({
-    type: "uuid"
-  })
-  categoryId: string
+  @Column({ type: 'int' })
+  categoryId: number;
 }

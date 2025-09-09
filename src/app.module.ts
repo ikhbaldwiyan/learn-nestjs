@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { dataSourceOptions } from './config/database.config';
 import { AuthModule } from './auth/auth.module';
 import { ArticlesModule } from './articles/articles.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ArticlesModule } from './articles/articles.module';
     UserModule,
     AuthModule,
     ArticlesModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
