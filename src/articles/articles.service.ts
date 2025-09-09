@@ -82,37 +82,31 @@ export class ArticlesService {
     const article = await this.articleRepo.findOne({
       where: { id },
       relations: ['user', 'category', 'comments', 'comments.user'],
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        createAt: true,
+        updatedAt: true,
+        category: true,
+        comments: {
+          id: true,
+          content: true,
+          user: {
+            name: true,
+            id: true
+          }
+        },
+        user: {
+          id: true,
+          name: true
+        }
+      }
     });
 
     if (!article) throw new NotFoundException(`Article ${id} not found`);
 
-    return {
-      id: article.id,
-      title: article.title,
-      content: article.content,
-      createAt: article.createAt,
-      updatedAt: article.updatedAt,
-      author: {
-        id: article.user.id,
-        name: article.user.name,
-        email: article.user.email,
-      },
-      category: {
-        id: article.category.id,
-        name: article.category.name,
-        status: article.category.status,
-      },
-      comments: article.comments.map((comment) => ({
-        id: comment.id,
-        content: comment.content,
-        createdAt: comment.createdAt,
-        user: {
-          id: comment.user.id,
-          name: comment.user.name,
-          email: comment.user.email,
-        },
-      })),
-    };
+    return article
   }
 
   async update(id: string, updateDto: UpdateArticleDto): Promise<Article> {
@@ -122,6 +116,8 @@ export class ArticlesService {
       throw new NotFoundException(`Article with id ${id} not found`);
     }
     Object.assign(article, updateDto);
+
+    // update category id still not working beacause relation
 
     return await this.articleRepo.save(article);
   }
