@@ -9,7 +9,7 @@ export const dataSourceOptions: DataSourceOptions = {
   database: 'learn',
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
   migrations: ["dist/migrations/*{.ts,.js}"],
-  synchronize: true, // enable only in development
+  synchronize: false, // enable only in development
 };
 
 const dataSource = new DataSource(dataSourceOptions);

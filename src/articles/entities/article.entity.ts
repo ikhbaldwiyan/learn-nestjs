@@ -23,6 +23,9 @@ export class Article {
   @Column({ type: 'text' })
   content: string;
 
+  @Column({ nullable: true})
+  image?: string;
+
   @Column({
     type: 'enum',
     enum: ArticleStatus,

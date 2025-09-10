@@ -11,6 +11,7 @@ import {
   paginate,
   Pagination,
 } from 'nestjs-typeorm-paginate';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class ArticlesService {
@@ -19,9 +20,13 @@ export class ArticlesService {
     private readonly articleRepo: Repository<Article>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
-  async create(dto: CreateArticleDto): Promise<Article> {
+  async create(
+    dto: CreateArticleDto,
+    file?: Express.Multer.File,
+  ): Promise<Article> {
     try {
       const user = await this.userRepo.findOneBy({ id: dto.userId });
 
@@ -29,7 +34,16 @@ export class ArticlesService {
         throw new NotFoundException('User not found');
       }
 
-      const article = this.articleRepo.create(dto);
+      let image: string | undefined;
+
+      if (file) {
+        image = await this.cloudinaryService.uploadImageStream(file);
+      }
+
+      const article = this.articleRepo.create({
+        ...dto,
+        image,
+      });
 
       return this.articleRepo.save(article);
     } catch (error) {
@@ -54,6 +68,7 @@ export class ArticlesService {
         'article.status',
         'article.createAt',
         'article.updatedAt',
+        'article.image',
         'user.id',
         'user.name',
         'user.email',
@@ -89,33 +104,44 @@ export class ArticlesService {
         createAt: true,
         updatedAt: true,
         category: true,
+        image: true,
         comments: {
           id: true,
-          content: true,
+          message: true,
           user: {
             name: true,
-            id: true
-          }
+            id: true,
+          },
         },
         user: {
           id: true,
-          name: true
-        }
-      }
+          name: true,
+        },
+      },
     });
 
     if (!article) throw new NotFoundException(`Article ${id} not found`);
 
-    return article
+    return article;
   }
 
-  async update(id: string, updateDto: UpdateArticleDto): Promise<Article> {
+  async update(
+    id: string,
+    updateDto: UpdateArticleDto,
+    file?: Express.Multer.File,
+  ): Promise<Article> {
     const article = await this.findOne(id);
 
     if (!article) {
       throw new NotFoundException(`Article with id ${id} not found`);
     }
-    Object.assign(article, updateDto);
+
+    let image: string | undefined;
+
+    if (file) {
+      image = await this.cloudinaryService.uploadImageStream(file);
+    }
+    Object.assign(article, { ...updateDto, image });
 
     // update category id still not working beacause relation
 

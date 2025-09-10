@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ArticlesModule } from './articles/articles.module';
 import { CategoryModule } from './category/category.module';
 import { CommentModule } from './comment/comment.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CommentModule } from './comment/comment.module';
     ArticlesModule,
     CategoryModule,
     CommentModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

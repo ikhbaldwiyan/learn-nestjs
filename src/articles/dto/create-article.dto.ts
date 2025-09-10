@@ -1,5 +1,15 @@
+import { Type } from 'class-transformer';
 import { ArticleStatus } from './article-status.enum';
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, isString, IsString, IsUUID } from 'class-validator';
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  isString,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 export class CreateArticleDto {
   @IsString()
@@ -18,7 +28,11 @@ export class CreateArticleDto {
   @IsNotEmpty({ message: 'userId is required' })
   userId: string;
 
-  @IsNumber()
+  @IsInt()
+  @Type(() => Number)
   @IsNotEmpty({ message: 'categoryId is required' })
   categoryId: number;
+
+  @IsOptional()
+  image: string;
 }

@@ -5,10 +5,11 @@ import { Article } from './entities/article.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from '../user/user/user.service';
 import { User } from '../user/entites/user.entity';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Module({
   controllers: [ArticlesController],
-  providers: [ArticlesService, UserService],
+  providers: [ArticlesService, UserService, CloudinaryService],
   imports: [TypeOrmModule.forFeature([Article, User])],
 })
 export class ArticlesModule {}
