@@ -45,7 +45,7 @@ export class CommentService {
       await this.commentRepo.update(
         { articleId: article.id, userId: createCommentDto.userId },
         {
-          content: createCommentDto.content,
+          message: createCommentDto.content,
         },
       );
 

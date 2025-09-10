@@ -26,7 +26,7 @@ export class Comment {
   articleId: string;
 
   @Column({ type: 'text' })
-  content: string;
+  message: string;
 
   @CreateDateColumn()
   readonly createdAt!: Date;

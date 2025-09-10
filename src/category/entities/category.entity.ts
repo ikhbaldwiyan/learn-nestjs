@@ -1,8 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { CategoryStatus } from "../dto/category-status.enum";
-import { Article } from "../../articles/entities/article.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Article } from '../../articles/entities/article.entity';
 
-@Entity("categories")
+@Entity('categories')
 export class Category {
   @PrimaryGeneratedColumn()
   id: number;
@@ -11,12 +10,10 @@ export class Category {
   name: string;
 
   @Column({
-    type: "enum",
-    enum: CategoryStatus,
-    default: CategoryStatus.ACTIVE
+    default: true,
   })
-  status: string
+  status: boolean;
 
   @OneToMany(() => Article, (article) => article.category)
-  articles: Article[]
+  articles: Article[];
 }
