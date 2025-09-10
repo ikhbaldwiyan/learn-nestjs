@@ -74,7 +74,8 @@ export class ArticlesService {
         'user.email',
         'category.id',
         'category.name',
-      ]);
+      ])
+      .orderBy('article.createAt', 'DESC');
 
     if (userId) {
       queryBuilder.andWhere('article.user = :userId', { userId });
@@ -103,7 +104,10 @@ export class ArticlesService {
         content: true,
         createAt: true,
         updatedAt: true,
-        category: true,
+        category: {
+          id: true,
+          name: true
+        },
         image: true,
         comments: {
           id: true,

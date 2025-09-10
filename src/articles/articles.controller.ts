@@ -15,6 +15,7 @@ import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { ArticleStatus } from './dto/article-status.enum';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiQuery } from '@nestjs/swagger';
 
 @Controller('articles')
 export class ArticlesController {
@@ -22,6 +23,10 @@ export class ArticlesController {
 
   @Post()
   @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes("multipart/form-data")
+  @ApiBody({
+    type: CreateArticleDto
+  })
   create(
     @Body() createDto: CreateArticleDto,
     @UploadedFile() file: Express.Multer.File,
@@ -30,6 +35,15 @@ export class ArticlesController {
   }
 
   @Get()
+  @ApiBearerAuth()
+  @ApiQuery({ name: 'userId', required: false })
+  @ApiQuery({
+    name: 'status',
+    enum: ArticleStatus,
+    required: false,
+    description: 'Filter artikel berdasarkan status',
+  })
+  @ApiQuery({ name: 'keyword', required: false })
   findAll(
     @Query('page') page = 1,
     @Query('limit') limit = 10,
@@ -51,6 +65,7 @@ export class ArticlesController {
   }
 
   @UseInterceptors(FileInterceptor('image'))
+  @ApiConsumes("multipart/form-data")
   @Patch(':id')
   update(
     @Param('id') id: string,
