@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { User } from '../user/entites/user.entity';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Injectable()
 export class ProfileService {
@@ -13,17 +14,29 @@ export class ProfileService {
     private profileRepository: Repository<Profile>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
-  async create(userId: string, createProfileDto: CreateProfileDto) {
+  async create(
+    userId: string,
+    createProfileDto: CreateProfileDto,
+    file?: Express.Multer.File,
+  ) {
     const user = await this.userRepository.findOneBy({ id: userId });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
 
+    let image: string | undefined;
+
+    if (file) {
+      image = await this.cloudinaryService.uploadImageStream(file);
+    }
+
     const profile = this.profileRepository.create({
       ...createProfileDto,
+      image,
       userId: user?.id,
     });
     return this.profileRepository.save(profile);

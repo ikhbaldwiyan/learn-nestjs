@@ -1,14 +1,15 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsNumber } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
 
 export class CreateProfileDto {
-
-  @ApiProperty()
+  @ApiProperty({ type: 'number' })
   @IsNotEmpty()
-  @IsNumber()
   age: number;
 
   @ApiProperty()
   @IsNotEmpty()
   bio: string;
+
+  @ApiPropertyOptional({ type: String, format: 'binary' })
+  image?: string;
 }

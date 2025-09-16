@@ -4,10 +4,11 @@ import { ProfileController } from './profile.controller';
 import { Profile } from './entities/profile.entity';
 import { User } from '../user/entites/user.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Profile, User])],
   controllers: [ProfileController],
-  providers: [ProfileService],
+  providers: [ProfileService, CloudinaryService],
 })
 export class ProfileModule {}

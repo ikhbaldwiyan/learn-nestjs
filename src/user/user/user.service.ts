@@ -31,6 +31,7 @@ export class UserService {
         profile: {
           bio: true,
           age: true,
+          image: true,
         },
       },
       relations: ['profile'],
@@ -48,6 +49,7 @@ export class UserService {
         profile: {
           bio: true,
           age: true,
+          image: true,
         }
       },
       relations: ['profile'],
