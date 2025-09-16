@@ -10,6 +10,7 @@ import { ArticlesModule } from './articles/articles.module';
 import { CategoryModule } from './category/category.module';
 import { CommentModule } from './comment/comment.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     CategoryModule,
     CommentModule,
     CloudinaryModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

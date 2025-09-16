@@ -23,25 +23,41 @@ export class UserService {
   }
 
   async findAll(): Promise<User[]> {
-    const users = await this.userRepository.find()
-    return users?.map((user) => ({
-      id: user.id,
-      name: user.name,
-      email: user.email
-    }))
+    const users = await this.userRepository.find({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        profile: {
+          bio: true,
+          age: true,
+        },
+      },
+      relations: ['profile'],
+    });
+    return users;
   }
 
   async getUserDetail(id: string): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.findOne({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        profile: {
+          bio: true,
+          age: true,
+        }
+      },
+      relations: ['profile'],
+    });
 
     if (!user) {
       throw new NotFoundException('User not found');
     }
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email
-    };
+    
+    return user
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
